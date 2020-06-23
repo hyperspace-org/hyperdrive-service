@@ -1,8 +1,17 @@
 {
-  "name": "y",
+  "name": "@hyperspace/hyperdrive",
   "version": "1.0.0",
-  "description": "A Hyperspace service that exposes the current hyperdrive-daemon FUSE functionality.",
+  "description": "A Hyperspace service that for managing Hyperdrives over FUSE.",
   "main": "index.js",
+  "bin": {
+    "hyperdrive": "./bin/run/run"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib/",
+    "bin/"
+  ],
   "directories": {
     "test": "test"
   },
@@ -20,6 +29,7 @@
     "hyperdrive-schemas": "^1.11.0",
     "is-options": "^1.0.1",
     "nanoresource-promise": "^1.2.2",
+    "ora": "^4.0.4",
     "pino": "^6.3.2",
     "tape": "^5.0.1"
   },
@@ -32,16 +42,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andrewosh/hyperspace-fuse.git"
+    "url": "git+https://github.com/hyperspace-org/hyperdrive.git"
   },
   "keywords": [
     "hyperspace",
+    "hyperdrive",
     "fuse"
   ],
   "author": "Andrew Osheroff <andrewosh@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/andrewosh/hyperspace-fuse/issues"
+    "url": "https://github.com/hyperspace-org/hyperdrive/issues"
   },
-  "homepage": "https://github.com/andrewosh/hyperspace-fuse#readme"
+  "homepage": "https://github.com/hyperspace-org/hyperdrive#readme",
+  "oclif": {
+    "commands": "./bin/commands",
+    "bin": "hyperdrive",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-autocomplete"
+    ]
+  }
 }

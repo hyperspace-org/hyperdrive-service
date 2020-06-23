@@ -1,69 +1,68 @@
-const p = require('path')
-const chalk = require('chalk')
+const p = require('path').posix
 const ora = require('ora')
 
-const loadClient = require('../lib/loader')
-const { normalize, keyCoercer } = require('../lib/cli')
-const constants = require('../lib/constants')
+const DaemonCommand = require('../../lib/cli')
 
-exports.command = 'unseed [path]'
-exports.desc = 'Stop seeding a Hyperdrive.'
-exports.builder = {
-  key: {
-    description: 'The drive key to seed (will override the provided path)',
-    type: 'string',
-    default: null,
-    coerce: keyCoercer
+class UnseedCommand extends DaemonCommand {
+  static usage = 'unseed ~/Hyperdrive/my/drive'
+  static description = 'Stop seeding a Hyperdrive.'
+  static args = [
+    DaemonCommand.drivePathArg({
+      required: false,
+      description: 'The path to the drive that should be unseeded.',
+      default: process.cwd()
+    })
+  ]
+  static flags = {
+    key: DaemonCommand.keyFlag({
+      description: 'The drive key to seed (will override the provided path)'
+    })
   }
-}
 
-exports.handler = function (argv) {
-  var spinner = ora(chalk.blue('Leaving the network (this might take some time to unnanounce)'))
-  loadClient((err, client) => {
-    if (err) return onerror(err)
-    return onclient(client)
-  })
+  async run () {
+    const self = this
+    const { flags, args } = this.parse(UnseedCommand)
+    await super.run()
 
-  async function onclient (client) {
+    const spinner = ora('Leaving the network (this might take some time to unnanounce)')
     spinner.start()
+
     const config = {
       lookup: false,
       announce: false,
       remember: true
     }
 
-    if (argv.key) {
+    if (flags.key) {
       try {
-        const drive = await client.drive.get({ key: argv.key })
+        const drive = await this.client.drive.get({ key: flags.key })
         await drive.configureNetwork(config)
         await drive.close()
         return onsuccess(null, true)
       } catch (err) {
         return onerror(err)
       }
+    } else {
+      try {
+        await this.client.fuse.configureNetwork(args.path, config)
+        return onsuccess(args.path, false)
+      } catch (err) {
+        return onerror(err)
+      }
+    }
+    this.exit()
+
+    function onerror (err) {
+      spinner.fail('Could not unseed the drive:')
+      console.error(`${err.details || err}`)
+      self.exit(1)
     }
 
-    try {
-      var mnt = normalize(argv.path)
-    } catch (err) {
-      return onerror(err)
+    function onsuccess (mnt, isKey) {
+      if (isKey) spinner.succeed(`Unseeded the drive with key ${flags.key.toString('hex')}`)
+      else spinner.succeed(`Unseeded the drive mounted at ${args.path}`)
     }
-    if (!mnt.startsWith(constants.mountpoint)) return onerror(new Error(`You can only unseed drives mounted underneath the root drive at ${constants.mountpoint}`))
-    client.fuse.configureNetwork(mnt, config, (err, rsp) => {
-      if (err) return onerror(err)
-      return onsuccess(mnt, false)
-    })
-  }
-
-  function onerror (err) {
-    spinner.fail(chalk.red('Could not unseed the drive:'))
-    console.error(chalk.red(`${err.details || err}`))
-    process.exit(1)
-  }
-
-  function onsuccess (mnt, isKey) {
-    if (isKey) spinner.succeed(chalk.green(`Unseeded the drive with key at ${argv.key.toString('hex')}`))
-    else spinner.succeed(chalk.green(`Unseeded the drive mounted at ${mnt}`))
-    process.exit(0)
   }
 }
+
+module.exports = UnseedCommand

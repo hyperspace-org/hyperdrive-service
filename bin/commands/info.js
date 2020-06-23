@@ -1,13 +1,13 @@
 const p = require('path').posix
 const { flags } = require('@oclif/command')
 
-const DaemonCommand = require('../../lib/cli')
+const HyperdriveServiceCommand = require('../../lib/cli')
 
-class InfoCommand extends DaemonCommand {
+class InfoCommand extends HyperdriveServiceCommand {
   static usage = 'info [path]'
   static description = 'Display information about the drive mounted at the given mountpoint.'
   static args = [
-    DaemonCommand.drivePathArg({
+    HyperdriveServiceCommand.drivePathArg({
       required: true
     })
   ]
@@ -35,9 +35,7 @@ class InfoCommand extends DaemonCommand {
     } catch (err) {
       console.error(`Could get info for mountpoint: ${args.path}`)
       console.error(`${err.details || err}`)
-      this.exit(1)
     }
-    this.exit()
   }
 }
 

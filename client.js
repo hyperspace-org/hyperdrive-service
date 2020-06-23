@@ -12,7 +12,7 @@ module.exports = class HyperdriveServiceClient {
     this.key = opts.key
     this.mnt = opts.mnt
 
-    this._client = opts.client || new HyperspaceClient(opts)
+    this.hyperspaceClient = opts.client || new HyperspaceClient(opts)
     this._rootDrive = null
   }
 
@@ -36,7 +36,7 @@ module.exports = class HyperdriveServiceClient {
 
 
   async _createDrive (opts = {}) {
-    var drive = hyperdrive(this._client.corestore, opts && opts.key, {
+    var drive = hyperdrive(this.hyperspaceClient.corestore, opts && opts.key, {
       ...opts,
       extension: false
     }).promises
@@ -100,7 +100,7 @@ module.exports = class HyperdriveServiceClient {
       path = null
     }
     const drive = await this._driveFromPath(path, opts)
-    return this._client.network.configure(drive.discoveryKey, { ...opts, announce: true, lookup: true })
+    return this.hyperspaceClient.network.configure(drive.discoveryKey, { ...opts, announce: true, lookup: true })
   }
 
   async unseed (path, opts = {}) {
@@ -109,6 +109,6 @@ module.exports = class HyperdriveServiceClient {
       path = null
     }
     const drive = await this._driveFromPath(path, opts)
-    return this._client.network.configure(drive.discoveryKey, { ...opts, announce: false, lookup: false })
+    return this.hyperspaceClient.network.configure(drive.discoveryKey, { ...opts, announce: false, lookup: false })
   }
 }

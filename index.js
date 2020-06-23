@@ -2,10 +2,8 @@ const os = require('os')
 const p = require('path')
 
 const { NanoresourcePromise: Nanoresource } = require('nanoresource-promise/emitter')
-const { HyperdriveFuse } = require('hyperdrive-fuse')
 const HyperspaceClient = require('hyperspace/client')
 const hyperdrive = require('hyperdrive')
-const fuse = require('fuse-native')
 const maybe = require('call-me-maybe')
 const pino = require('pino')
 
@@ -27,6 +25,7 @@ module.exports = class HyperdriveService extends Nanoresource {
     }, pino.destination(2))
 
     this.remember = !!opts.remember
+    this.disableFuse = !!opts.disableFuse
 
     this._client = opts.client || new HyperspaceClient(opts)
     this._rootDrive = null
@@ -39,12 +38,44 @@ module.exports = class HyperdriveService extends Nanoresource {
       if (config.key) this.key = Buffer.from(config.key, 'hex')
       if (config.mnt) this.mnt = config.mnt
     }
-    return this._mount()
+    if (this._fuseEnabled()) await this._mount()
   }
 
   async _close () {
     await this._unmount()
     await this._client.close()
+  }
+
+  _fuseEnabled () {
+    if (this.disableFuse) return false
+    var hyperfuse = null
+    try {
+      hyperfuse = require('hyperdrive-fuse')
+    } catch (err) {
+      notAvailable()
+      return false
+    }
+
+    return new Promise(resolve => {
+      hyperfuse.isConfigured((err, configured) => {
+        if (err) {
+          notAvailable()
+          return resolve(false)
+        }
+        if (!configured) {
+          notConfigured()
+          return resolve(false)
+        }
+        return resolve(true)
+      })
+    })
+
+    function notConfigured () {
+      console.warn('FUSE is not configured. Run `hyperdrive fuse-setup`.')
+    }
+    function notAvailable () {
+      console.warn('FUSE is not available on your platform.')
+    }
   }
 
   async _runNetworkingHeuristics (drive) {
@@ -86,6 +117,7 @@ module.exports = class HyperdriveService extends Nanoresource {
 
   async _mount () {
     await this._unmount()
+    const { HyperdriveFuse } = require('hyperdrive-fuse')
     const drive = await this._createDrive({ key: this.key })
     const fuseLogger = this.log.child({ component: 'fuse' })
     const fuse = new HyperdriveFuse(drive.drive, this.mnt, {
