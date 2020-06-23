@@ -1,0 +1,47 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "A Hyperspace service that exposes the current hyperdrive-daemon FUSE functionality.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "@oclif/command": "^1.6.1",
+    "@oclif/config": "^1.15.1",
+    "@oclif/errors": "^1.2.2",
+    "@oclif/plugin-autocomplete": "^0.2.0",
+    "@oclif/plugin-help": "^3.1.0",
+    "call-me-maybe": "^1.0.1",
+    "codecs": "^2.1.0",
+    "fuse-native": "^2.2.6",
+    "globby": "^11.0.1",
+    "hyperdrive-fuse": "^1.2.15",
+    "hyperdrive-schemas": "^1.11.0",
+    "is-options": "^1.0.1",
+    "nanoresource-promise": "^1.2.2",
+    "pino": "^6.3.2",
+    "tape": "^5.0.1"
+  },
+  "devDependencies": {
+    "hypercore-crypto": "^2.1.0",
+    "tmp-promise": "^3.0.2"
+  },
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewosh/hyperspace-fuse.git"
+  },
+  "keywords": [
+    "hyperspace",
+    "fuse"
+  ],
+  "author": "Andrew Osheroff <andrewosh@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrewosh/hyperspace-fuse/issues"
+  },
+  "homepage": "https://github.com/andrewosh/hyperspace-fuse#readme"
+}
