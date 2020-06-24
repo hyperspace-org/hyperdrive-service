@@ -42,8 +42,6 @@ class StatsCommand extends HyperdriveServiceCommand {
         key: flags.key,
         storage: flags.storage
       })
-      console.log(1)
-      console.log('stats here:', stats)
       console.log(JSON.stringify(stats, null, 2))
     } catch (err) {
       console.error('Could not get the drive stats:')
