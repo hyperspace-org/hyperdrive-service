@@ -1,3 +1,5 @@
+const p = require('path')
+
 const cliProgress = require('cli-progress')
 const { flags } = require('@oclif/command')
 
@@ -40,10 +42,10 @@ class ImportCommand extends HyperdriveServiceCommand {
     var total = 0
     var uploaded = 0
 
-    const { progress, drive, cleanup } = this.client.import(args.key, args.dir, flags)
+    const { progress, drive, cleanup } = await this.client.import(args.key, args.dir, flags)
 
-    process.on('SIGINT', cleanup)
-    process.on('SIGTERM', cleanup)
+    process.on('SIGINT', onend)
+    process.on('SIGTERM', onend)
 
     const bar = new cliProgress.SingleBar({
       format: `Importing | {bar} | {percentage}% | {value}/{total} Files`
@@ -65,12 +67,16 @@ class ImportCommand extends HyperdriveServiceCommand {
     progress.on('skip-not-ignored', (src, dst) => {
       bar.update(++uploaded)
     })
-    progress.on('end', async () => {
-      await cleanup()
-      console.log('Upload completed or stopped by user. Exiting...')
-      process.exit(0)
-    })
+    progress.on('end', onend)
     bar.start(1, 0)
+
+    async function onend () {
+      // Make sure the events are fully processed.
+      await new Promise(resolve => setTimeout(resolve, 500))
+      await cleanup()
+      console.log('\nImport completed or stopped by user. Exiting...')
+      process.exit(0)
+    }
   }
 }
 

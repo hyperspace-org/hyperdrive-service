@@ -101,8 +101,8 @@ module.exports = class HyperdriveServiceClient {
     const network = {}
     for (const [mountpoint, { metadata, content }] of allMounts) {
       network[mountpoint] = {
-        metadataPeers: metadata.peers.map(mapPeer),
-        contentPeers: content.peers.map(mapPeer)
+        metadata: coreStats(metadata),
+        content: coreStats(content)
       }
     }
 
@@ -118,6 +118,17 @@ module.exports = class HyperdriveServiceClient {
     return {
       storage: storageObj,
       network
+    }
+
+    function coreStats (core) {
+      return {
+        key: core.key.toString('hex'),
+        discoveryKey: core.discoveryKey.toString('hex'),
+        writable: core.writable,
+        length: core.length,
+        byteLength: core.byteLength,
+        peers: core.peers.map(mapPeer)
+      }
     }
 
     function mapPeer (p) {

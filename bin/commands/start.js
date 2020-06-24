@@ -39,7 +39,12 @@ class StartCommand extends Command {
     process.on('SIGTERM', () => {
       service.close()
     })
-    return service.open()
+    try {
+      await service.open()
+    } catch (err) {
+      console.error('Could not start the Hyperdrive service. Is Hyperspace running?')
+      console.error('Error:', err)
+    }
   }
 }
 
