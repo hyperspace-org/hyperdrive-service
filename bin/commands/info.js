@@ -7,9 +7,11 @@ class InfoCommand extends HyperdriveServiceCommand {
   static usage = 'info [path]'
   static description = 'Display information about the drive mounted at the given mountpoint.'
   static args = [
-    HyperdriveServiceCommand.drivePathArg({
-      required: true
-    })
+    {
+      name: 'path',
+      required: true,
+      description: 'The path to the drive\'s location (must be within the root mountpoint).'
+    }
   ]
   static flags = {
     root: flags.boolean({
@@ -21,6 +23,7 @@ class InfoCommand extends HyperdriveServiceCommand {
   async run () {
     const { args, flags } = this.parse(InfoCommand)
     await super.run()
+    if (args.path) args.path = this.parsePath(this.client.mnt, args.path)
     try {
       const info = await this.infoForPath(args.path, flags.root)
       const isMount = !info.mountPath
@@ -28,14 +31,16 @@ class InfoCommand extends HyperdriveServiceCommand {
       const parentInfo = !isMount ? `(the parent mount is ${parentMount})` : ''
       console.log('Drive Info:')
       console.log()
-      console.log(`  Key:          ${info.key}`)
+      console.log(`  Key:          ${info.key.toString('hex')}`)
       console.log(`  Is Mount:     ${isMount} ${parentInfo}`)
       console.log(`  Writable:     ${info.writable}`)
       if (info.root) console.log('\nThis is info about your root drive. You probably should not share this.')
     } catch (err) {
       console.error(`Could get info for mountpoint: ${args.path}`)
       console.error(`${err.details || err}`)
+      process.exit(1)
     }
+    process.exit(0)
   }
 }
 

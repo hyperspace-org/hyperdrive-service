@@ -33,8 +33,8 @@ module.exports = class HyperdriveService extends Nanoresource {
     await this._client.ready()
     if (this.remember) {
       const config = await loadConfig()
-      if (config.rootDriveKey) this.key = Buffer.from(config.rootDriveKey, 'hex')
-      if (config.mnt) this.mnt = config.mnt
+      if (!this.key && config.rootDriveKey) this.key = Buffer.from(config.rootDriveKey, 'hex')
+      if (!this.mnt && config.mnt) this.mnt = config.mnt
     }
     if (this._fuseEnabled()) await this._mount()
   }

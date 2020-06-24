@@ -1,3 +1,4 @@
+const p = require('path')
 const { Command, flags } = require('@oclif/command')
 
 const HyperdriveService = require('../..')
@@ -27,6 +28,8 @@ class StartCommand extends Command {
 
   async run () {
     const { flags } = this.parse(StartCommand)
+    flags.disableFuse = flags['disable-fuse']
+    if (flags.mnt) flags.mnt = p.resolve(flags.mnt)
     const service = new HyperdriveService({
       ...flags
     })

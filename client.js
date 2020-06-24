@@ -20,7 +20,7 @@ module.exports = class HyperdriveServiceClient {
     if (this._rootDrive) return
     if (!this.key || !this.mnt) {
       const config = await loadConfig()
-      if (config.key) this.key = Buffer.from(config.key, 'hex')
+      if (config.rootDriveKey) this.key = Buffer.from(config.rootDriveKey, 'hex')
       if (config.mnt) this.mnt = config.mnt
     }
     if (!this.key) throw new Error('HyperdriveServiceClient was not given a root drive key.')
