@@ -64,10 +64,16 @@ module.exports = class HyperdriveServiceClient {
       this._rootDrive.drive.stat(noopPath, { trie: true }, (err, stat, trie, _, __, mountPath) => {
         if (err && err.errno !== 2) return reject(err)
         if (err && !trie) return resolve(null)
-        return resolve({
-          key: trie.key,
-          writable: trie.feed.writable,
-          mountPath: mountPath.slice(0, mountPath.length - noopFilePath.length)
+        this.hyperspaceClient.network.getConfiguration(trie.feed.discoveryKey, (err, networkConfig) => {
+          if (err) return reject(err)
+          return resolve({
+            key: trie.key,
+            discoveryKey: trie.feed.discoveryKey,
+            writable: trie.feed.writable,
+            mountPath: mountPath.slice(0, mountPath.length - noopFilePath.length),
+            announce: !!(networkConfig && networkConfig.announce),
+            lookup: !!(networkConfig && networkConfig.lookup)
+          })
         })
       })
     })
@@ -91,7 +97,9 @@ module.exports = class HyperdriveServiceClient {
       path = null
     }
     const drive = await this._driveFromPath(path, opts)
-    return drive.stats(opts)
+    const stats = await drive.stats(opts)
+    await drive.close()
+    return stats
   }
 
   async seed (path, opts = {}) {
@@ -99,8 +107,13 @@ module.exports = class HyperdriveServiceClient {
       opts = path
       path = null
     }
-    const drive = await this._driveFromPath(path, opts)
-    return this.hyperspaceClient.network.configure(drive.discoveryKey, { ...opts, announce: true, lookup: true })
+    var discoveryKey = opts.discoveryKey ? Buffer.from(opts.discoveryKey, 'hex') : null
+    if (!discoveryKey) {
+      const drive = await this._driveFromPath(path, opts)
+      discoveryKey = drive.discoveryKey
+      await drive.close()
+    }
+    return this.hyperspaceClient.network.configure(discoveryKey, { ...opts, announce: true, lookup: true })
   }
 
   async unseed (path, opts = {}) {
@@ -108,7 +121,12 @@ module.exports = class HyperdriveServiceClient {
       opts = path
       path = null
     }
-    const drive = await this._driveFromPath(path, opts)
-    return this.hyperspaceClient.network.configure(drive.discoveryKey, { ...opts, announce: false, lookup: false })
+    var discoveryKey = opts.discoveryKey ? Buffer.from(opts.discoveryKey, 'hex') : null
+    if (!discoveryKey) {
+      const drive = await this._driveFromPath(path, opts)
+      discoveryKey = drive.discoveryKey
+      await drive.close()
+    }
+    return this.hyperspaceClient.network.configure(discoveryKey, { ...opts, announce: false, lookup: false })
   }
 }

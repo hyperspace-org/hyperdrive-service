@@ -29,6 +29,7 @@
     "hyperdrive-fuse": "^1.2.15",
     "hyperdrive-schemas": "^1.11.0",
     "hyperspace": "git+https://github.com/hyperspace-org/hyperspace",
+    "hypercore-crypto": "^2.1.0",
     "is-options": "^1.0.1",
     "nanoresource-promise": "^1.2.2",
     "ora": "^4.0.4",
@@ -36,7 +37,6 @@
     "tape": "^5.0.1"
   },
   "devDependencies": {
-    "hypercore-crypto": "^2.1.0",
     "tmp-promise": "^3.0.2"
   },
   "scripts": {

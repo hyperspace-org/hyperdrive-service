@@ -10,6 +10,7 @@ class InfoCommand extends HyperdriveServiceCommand {
     {
       name: 'path',
       required: true,
+      default: process.cwd(),
       description: 'The path to the drive\'s location (must be within the root mountpoint).'
     }
   ]
@@ -34,6 +35,8 @@ class InfoCommand extends HyperdriveServiceCommand {
       console.log(`  Key:          ${info.key.toString('hex')}`)
       console.log(`  Is Mount:     ${isMount} ${parentInfo}`)
       console.log(`  Writable:     ${info.writable}`)
+      console.log(`  Announce:     ${info.announce}`)
+      console.log(`  Lookup:       ${info.lookup}`)
       if (info.root) console.log('\nThis is info about your root drive. You probably should not share this.')
     } catch (err) {
       console.error(`Could get info for mountpoint: ${args.path}`)

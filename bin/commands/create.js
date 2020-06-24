@@ -34,11 +34,9 @@ class CreateCommand extends HyperdriveServiceCommand {
         await hsClient.network.configure(drive.discoveryKey, { announce: true, lookup: true, remember: true}) 
       }
       const network = await hsClient.network.getConfiguration(drive.discoveryKey)
-      console.log('closing drive')
       await drive.close()
-      console.log('drive closed')
 
-      const seeding = !!network.announce
+      const seeding = !!(network && network.announce)
       spinner.succeed('Created a drive with the following info:')
       console.log()
       console.log(`  Path: ${args.path} `)
