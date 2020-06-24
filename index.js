@@ -10,9 +10,7 @@ const pino = require('pino')
 const { loadConfig, saveConfig } = require('./lib/config')
 const NetworkHandlers = require('./lib/network')
 
-const CONFIG_PREFIX = 'fuse'
 const DEFAULT_MNT = p.join(os.homedir(), 'Hyperdrive')
-const ROOT_DRIVE_CONFIG = 'fuse/root-drive'
 
 module.exports = class HyperdriveService extends Nanoresource {
   constructor (opts = {}) {
@@ -24,7 +22,7 @@ module.exports = class HyperdriveService extends Nanoresource {
       level: opts.logLevel || 'info'
     }, pino.destination(2))
 
-    this.remember = !!opts.remember
+    this.remember = (opts.remember === undefined) ? true : !!opts.remember
     this.disableFuse = !!opts.disableFuse
 
     this._client = opts.client || new HyperspaceClient(opts)
@@ -33,9 +31,9 @@ module.exports = class HyperdriveService extends Nanoresource {
 
   async _open () {
     await this._client.ready()
-    if (this.remember !== false) {
+    if (this.remember) {
       const config = await loadConfig()
-      if (config.key) this.key = Buffer.from(config.key, 'hex')
+      if (config.rootDriveKey) this.key = Buffer.from(config.rootDriveKey, 'hex')
       if (config.mnt) this.mnt = config.mnt
     }
     if (this._fuseEnabled()) await this._mount()
@@ -130,12 +128,12 @@ module.exports = class HyperdriveService extends Nanoresource {
     await fuse.mount(networkHandlers.generateHandlers())
     this._rootDrive = drive
     this._rootFuse = fuse
-    if (this.remember !== false) {
+    if (this.remember) {
       const config = {
         rootDriveKey: this.key.toString('hex'),
         mnt: this.mnt
       }
-      await saveConfig(this.config)
+      await saveConfig(config)
     }
   }
 

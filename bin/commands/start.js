@@ -27,10 +27,16 @@ class StartCommand extends Command {
 
   async run () {
     const { flags } = this.parse(StartCommand)
-    await super.run()
     const service = new HyperdriveService({
       ...flags
     })
+    process.on('SIGINT', () => {
+      service.close()
+    })
+    process.on('SIGTERM', () => {
+      service.close()
+    })
+    return service.open()
   }
 }
 
