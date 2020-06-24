@@ -88,7 +88,7 @@ module.exports = class HyperdriveService extends Nanoresource {
         copyFrom: drive.discoveryKey,
         lookup: !trie.feed.writable,
         overwrite: false
-      }).catch(err => {
+      }).catch(() => {
         // If the configuration couldn't be overwritten, that's OK.
       })
     }

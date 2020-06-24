@@ -1,12 +1,11 @@
 const tmp = require('tmp-promise')
-const hypercoreCrypto = require('hypercore-crypto')
 const { createMany: hsCreate } = require('hyperspace/test/helpers/create')
 
 const HyperdriveService = require('../..')
 const HyperdriveServiceClient = require('../../client')
 
 async function create (numMounts, opts) {
-  const { clients, servers, dirs, cleanup: hsCleanup } = await hsCreate(numMounts, opts)
+  const { clients, cleanup: hsCleanup } = await hsCreate(numMounts, opts)
   const fuseMnts = []
   const fuseServices = []
   const fuseClients = []

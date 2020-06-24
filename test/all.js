@@ -5,7 +5,7 @@ const hypercoreCrypto = require('hypercore-crypto')
 const { create, createOne } = require('./helpers/create')
 
 test('can start/stop the fuse service', async t => {
-  const { fuseService, fuseClient, fuseMnt, cleanup } = await createOne()
+  const { fuseService, fuseMnt, cleanup } = await createOne()
   {
     const contents = await fs.readdir(fuseMnt.path)
     t.same(contents, ['Network'])
@@ -20,7 +20,7 @@ test('can start/stop the fuse service', async t => {
 })
 
 test('can mount a drive', async t => {
-  const { fuseService, fuseClient, fuseMnt, cleanup } = await createOne()
+  const { fuseClient, fuseMnt, cleanup } = await createOne()
 
   const drive = await fuseClient.mount(p.join(fuseMnt.path, 'test-drive'))
   {
@@ -40,7 +40,7 @@ test('can mount a drive', async t => {
 })
 
 test('can mount a drive twice', async t => {
-  const { fuseService, fuseClient, fuseMnt, cleanup } = await createOne()
+  const { fuseClient, fuseMnt, cleanup } = await createOne()
 
   const drive = await fuseClient.mount(p.join(fuseMnt.path, 'test-drive'))
   await fuseClient.mount(p.join(fuseMnt.path, 'test-drive-2'), { key: drive.key })
@@ -61,9 +61,9 @@ test('can mount a drive twice', async t => {
 })
 
 test('can unmount a drive', async t => {
-  const { fuseService, fuseClient, fuseMnt, cleanup } = await createOne()
+  const { fuseClient, fuseMnt, cleanup } = await createOne()
 
-  const drive = await fuseClient.mount(p.join(fuseMnt.path, 'test-drive'))
+  await fuseClient.mount(p.join(fuseMnt.path, 'test-drive'))
   {
     const contents = await fs.readdir(fuseMnt.path)
     t.same(contents, ['Network', 'test-drive'])
@@ -81,11 +81,11 @@ test('can unmount a drive', async t => {
 })
 
 test('can get mounted drive info', async t => {
-  const { fuseService, fuseClient, fuseMnt, cleanup } = await createOne()
+  const { fuseClient, fuseMnt, cleanup } = await createOne()
 
   const drive = await fuseClient.mount(p.join(fuseMnt.path, 'test-drive'))
   const badKey = hypercoreCrypto.randomBytes(32)
-  const nonwritableDrive = await fuseClient.mount(p.join(fuseMnt.path, 'nonwritable'), {
+  await fuseClient.mount(p.join(fuseMnt.path, 'nonwritable'), {
     key: badKey
   })
   await drive.mkdir('hello')
@@ -125,7 +125,7 @@ test('can get mounted drive info', async t => {
 })
 
 test('can read from Network/by-key', async t => {
-  const { fuseService, fuseClient, fuseMnt, cleanup } = await createOne()
+  const { fuseClient, fuseMnt, cleanup } = await createOne()
 
   const drive = await fuseClient.mount(p.join(fuseMnt.path, 'test-drive'))
   await drive.writeFile('hello', 'world')
@@ -140,7 +140,7 @@ test('can read from Network/by-key', async t => {
 })
 
 test('can seed a mounted drive', async t => {
-  const { fuseServices, fuseClients, fuseMnts, cleanup } = await create(3)
+  const { fuseClients, fuseMnts, cleanup } = await create(3)
 
   var sharedDriveKey = null
   var unsharedDriveKey = null
@@ -178,8 +178,8 @@ test('can seed a mounted drive', async t => {
     const sharedDrivePath = p.join(mnt.path, 'shared-drive')
     const unsharedDrivePath = p.join(mnt.path, 'unshared-drive')
 
-    const sharedDrive = await client.mount(sharedDrivePath, { key: sharedDriveKey })
-    const unsharedDrive = await client.mount(unsharedDrivePath, { key: unsharedDriveKey })
+    await client.mount(sharedDrivePath, { key: sharedDriveKey })
+    await client.mount(unsharedDrivePath, { key: unsharedDriveKey })
 
     // Both drives are read-only, so hyperdrive-daemon-client will automatically do a swarm lookup.
     const sharedContents = await fs.readdir(sharedDrivePath)

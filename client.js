@@ -1,11 +1,9 @@
 const p = require('path')
-const codecs = require('codecs')
 const isOptions = require('is-options')
 const hyperdrive = require('hyperdrive')
 const HyperspaceClient = require('hyperspace/client')
 
 const { loadConfig } = require('./lib/config')
-const HyperdriveService = require('.')
 const importDirectory = require('./lib/cli/import')
 const exportDrive = require('./lib/cli/export')
 
@@ -35,7 +33,6 @@ module.exports = class HyperdriveServiceClient {
     if (!fullPath.startsWith(this.mnt)) throw new Error('Can only create a mount within the root drive.')
     return fullPath.slice(this.mnt.length)
   }
-
 
   async _createDrive (opts = {}) {
     var drive = hyperdrive(this.hyperspaceClient.corestore, opts && opts.key, {
@@ -126,7 +123,7 @@ module.exports = class HyperdriveServiceClient {
     function mapPeer (p) {
       return {
         ...p,
-        remotePublicKey: p.remotePublicKey.toString('hex'),
+        remotePublicKey: p.remotePublicKey.toString('hex')
       }
     }
   }

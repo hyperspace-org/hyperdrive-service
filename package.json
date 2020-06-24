@@ -39,10 +39,11 @@
     "tape": "^5.0.1"
   },
   "devDependencies": {
+    "standard": "^14.3.4",
     "tmp-promise": "^3.0.2"
   },
   "scripts": {
-    "test": "tape test/*.js"
+    "test": "standard && tape test/*.js"
   },
   "repository": {
     "type": "git",
@@ -65,6 +66,12 @@
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-autocomplete"
+    ]
+  },
+  "standard": {
+    "ignore": [
+      "lib/network.js",
+      "bin/*"
     ]
   }
 }
