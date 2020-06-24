@@ -24,9 +24,10 @@ class CreateCommand extends HyperdriveServiceCommand {
   async run () {
     const { flags, args } = this.parse(CreateCommand)
     await super.run()
+    if (args.path) args.path = this.parsePath(this.client.mnt, args.path)
+
     const spinner = ora('Creating your new drive (if seeding, this might take a while to announce)...')
     try {
-      if (args.path) args.path = this.parsePath(this.client.mnt, args.path)
       const drive = await this.client.mount(args.path)
       const hsClient = this.client.hyperspaceClient
 

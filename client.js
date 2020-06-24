@@ -97,9 +97,36 @@ module.exports = class HyperdriveServiceClient {
       path = null
     }
     const drive = await this._driveFromPath(path, opts)
-    const stats = await drive.stats(opts)
+
+    const allMounts = await drive.getAllMounts({ memory: true })
+    const network = {}
+    for (const [mountpoint, { metadata, content }] of allMounts) {
+      network[mountpoint] = {
+        metadataPeers: metadata.peers.map(mapPeer),
+        contentPeers: content.peers.map(mapPeer)
+      }
+    }
+
+    const storageObj = {}
+    if (opts.storage) {
+      const stats = await drive.stats('/', opts)
+      for (const [k, v] of stats) {
+        storageObj[k] = v
+      }
+    }
+
     await drive.close()
-    return stats
+    return {
+      storage: storageObj,
+      network
+    }
+
+    function mapPeer (p) {
+      return {
+        ...p,
+        remotePublicKey: p.remotePublicKey.toString('hex'),
+      }
+    }
   }
 
   async seed (path, opts = {}) {

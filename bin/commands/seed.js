@@ -55,6 +55,7 @@ class SeedCommand extends HyperdriveServiceCommand {
 
     const discoveryKey = flags.key ? hypercoreCrypto.discoveryKey(flags.key) : null
     try {
+      if (args.path) await this.infoForPath(args.path, flags.root)
       await this.client.seed(args.path, {
         discoveryKey,
         ...config
