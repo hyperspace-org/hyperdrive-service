@@ -6,6 +6,8 @@ const HyperspaceClient = require('hyperspace/client')
 
 const { loadConfig } = require('./lib/config')
 const HyperdriveService = require('.')
+const importDirectory = require('./lib/cli/import')
+const exportDrive = require('./lib/cli/export')
 
 module.exports = class HyperdriveServiceClient {
   constructor (opts = {}) {
@@ -134,7 +136,8 @@ module.exports = class HyperdriveServiceClient {
       opts = path
       path = null
     }
-    var discoveryKey = opts.discoveryKey ? Buffer.from(opts.discoveryKey, 'hex') : null
+    var discoveryKey = opts.discoveryKey
+    if (discoveryKey && !Buffer.isBuffer(discoveryKey)) discoveryKey = Buffer.from(discoveryKey, 'hex')
     if (!discoveryKey) {
       const drive = await this._driveFromPath(path, opts)
       discoveryKey = drive.discoveryKey
@@ -148,12 +151,21 @@ module.exports = class HyperdriveServiceClient {
       opts = path
       path = null
     }
-    var discoveryKey = opts.discoveryKey ? Buffer.from(opts.discoveryKey, 'hex') : null
+    var discoveryKey = opts.discoveryKey
+    if (discoveryKey && !Buffer.isBuffer(discoveryKey)) discoveryKey = Buffer.from(discoveryKey, 'hex')
     if (!discoveryKey) {
       const drive = await this._driveFromPath(path, opts)
       discoveryKey = drive.discoveryKey
       await drive.close()
     }
     return this.hyperspaceClient.network.configure(discoveryKey, { ...opts, announce: false, lookup: false })
+  }
+
+  async import (key, dir, opts) {
+    return importDirectory(this, key, dir, opts)
+  }
+
+  async export (key, dir, opts) {
+    return exportDrive(this, key, dir, opts)
   }
 }
