@@ -43,22 +43,40 @@ class ExportCommand extends HyperdriveServiceCommand {
     process.on('SIGINT', onend)
     process.on('SIGTERM', onend)
 
+    let total = 0
+    let finished = 0
+    let peers = drive.metadata.peers.length
+    drive.drive.on('peer-open', () => {
+      peers++
+    })
+    drive.drive.on('peer-remove', () => {
+      peers--
+    })
+
     const bar = new cliProgress.SingleBar({
       format: `Exporting | {bar} | {percentage}% | {value}/{total} Content Blocks | {peers} Peers`
     })
     console.log(`Exporting ${drive.key.toString('hex')} into ${dir} (Ctrl+c to exit)...`)
     console.log()
     bar.start(1, 0)
-    bar.update(0, { peers: 0 })
-    progress.on('stats', stats => {
-      bar.setTotal(stats.total)
-      bar.update(stats.downloaded, { peers: stats.peers })
+    bar.update(0, { peers })
+    progress.on('put', src => {
+      total += src.stat.size
+    })
+    progress.on('put-end', src => {
+      finished += src.stat.size
+    })
+
+    const timer = setInterval(() => {
+      bar.setTotal(total)
+      bar.update(finished, { peers })
     })
     progress.on('end', onend)
 
     async function onend () {
       // Make sure the events are fully processed.
       await new Promise(resolve => setTimeout(resolve, 500))
+      if (timer) clearInterval(timer)
       await cleanup()
       console.log('\nExport completed or stopped by user. Exiting...')
       process.exit(0)
