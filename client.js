@@ -63,7 +63,7 @@ module.exports = class HyperdriveServiceClient {
       this._rootDrive.drive.stat(noopPath, { trie: true }, (err, stat, trie, _, __, mountPath) => {
         if (err && err.errno !== 2) return reject(err)
         if (err && !trie) return resolve(null)
-        this.hyperspaceClient.network.getConfiguration(trie.feed.discoveryKey, (err, networkConfig) => {
+        this.hyperspaceClient.network.status(trie.feed.discoveryKey, (err, networkConfig) => {
           if (err) return reject(err)
           return resolve({
             key: trie.key,
