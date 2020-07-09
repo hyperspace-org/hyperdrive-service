@@ -142,6 +142,8 @@ and `network` has the form:
 #### `const { progress, drive } = client.import(key, dir, opts = {})`
 Imports a Hyperdrive into Hyperspace.
 
+If you're using FUSE, you probably don't need to explictly `import`/`export`, because you can replicate this functionality using the filesystem alone.
+
 `progress` is an instance of [`mirror-folder`](https://github.com/mafintosh/mirror-folder).
 `drive` is the Hyperdrive that you're importing into.
 
@@ -152,25 +154,20 @@ Options include:
 }
 ```
 
-__Note: This imported drive will not appear inside your root drive unless you explicitly mount it with `hyperdrive mount (mount path) (imported drive key)`__
-
-##### When to use this
-If you're using FUSE, you probably don't need to explictly `import`/`export`, because you can replicate this functionality using the filesystem alone.
+_Note: This imported drive will not appear inside your root drive unless you explicitly mount it with `hyperdrive mount (mount path) (imported drive key)`_
 
 #### `const { progress, drive } = client.export(key, dir, opts = {})`
 Exports a Hyperdrive into a local directory.
+
+If you're using FUSE, you probably don't need to explictly `import`/`export`, because you can replicate this functionality using the filesystem alone.
 
 Options include:
 ```js
   watch: false // Watch for changes.
 ```
 
-##### When to use this
-If you're using FUSE, you probably don't need to explictly `import`/`export`, because you can replicate this functionality using the filesystem alone.
-
 ### CLI Commands
-The CLI includes a handful of commands that wrap the API methods described above. Running `hyperdrive help` will give more complete usage info.
-
+The `hyperdrive` CLI tool includes a handful of subcommands that wrap the API methods described above. Running `hyperdrive help` will give more complete usage info:
 ```
 $ ./bin/run/run help
 A Hyperspace service that for managing Hyperdrives over FUSE.
