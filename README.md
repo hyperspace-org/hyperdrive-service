@@ -9,7 +9,7 @@ The CLI gives you commands for interacting with Hyperdrives, both inside and out
 * The `import` and `export` commands are for users who don't want to use FUSE, but still want to move data in and out of Hyperdrives.
 
 ## For Hyperdrive Daemon Users
-This module replaces the functionality of the [`hyperdrive-daemon`])(https://github.com/hypercore-protocol/hyperdrive-daemon). If you've previously used that daemon, running Hyperspace for the first time will migrate your content in `~/.hyperdrive` to be compatible with this service.
+This module replaces the functionality of the [`hyperdrive-daemon`](https://github.com/hypercore-protocol/hyperdrive-daemon). If you've previously used that daemon, running Hyperspace for the first time will migrate your content in `~/.hyperdrive` to be compatible with this service.
 
 Also, @hyperspace/hyperdrive will only run in the foreground -- we switched to this model to keep things easy to use and debug. If you'd like to run it persistently (such that this service and Hyperspace auto-start on reboot), you can set this up using your system's process manager (like systemd).
 
