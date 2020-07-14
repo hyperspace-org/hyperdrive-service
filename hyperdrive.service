@@ -1,0 +1,11 @@
+[Unit]
+Description=Hyperdrive FUSE Service
+Documentation=https://github.com/hyperspace-org/hyperdrive-service
+After=hyperspace.service
+Requires=hyperspace.service
+
+[Service]
+ExecStart=/usr/bin/bash -c '$$(npm config get prefix)/bin/hyperdrive start'
+
+[Install]
+WantedBy=multi-user.target
