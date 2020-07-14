@@ -10,7 +10,8 @@
     "index.js",
     "client.js",
     "lib/",
-    "bin/"
+    "bin/",
+    "scripts/"
   ],
   "directories": {
     "test": "test"
