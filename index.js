@@ -26,11 +26,13 @@ module.exports = class HyperdriveService extends Nanoresource {
     this.disableFuse = !!opts.disableFuse
 
     this._client = opts.client || new HyperspaceClient(opts)
+    this._store = null
     this._rootDrive = null
   }
 
   async _open () {
     await this._client.ready()
+    this._store = this._client.corestore()
     if (this.remember) {
       const config = await loadConfig()
       if (!this.key && config.rootDriveKey) this.key = Buffer.from(config.rootDriveKey, 'hex')
@@ -102,7 +104,7 @@ module.exports = class HyperdriveService extends Nanoresource {
       cb = opts
       opts = null
     }
-    var drive = hyperdrive(this._client.corestore, opts && opts.key, {
+    var drive = hyperdrive(this._store, opts && opts.key, {
       ...opts,
       extension: false
     }).promises
