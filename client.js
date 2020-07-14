@@ -13,6 +13,7 @@ module.exports = class HyperdriveServiceClient {
     this.mnt = opts.mnt
 
     this.hyperspaceClient = opts.client || new HyperspaceClient(opts)
+    this._store = null
     this._rootDrive = null
   }
 
@@ -25,6 +26,7 @@ module.exports = class HyperdriveServiceClient {
     }
     if (!this.key) throw new Error('HyperdriveServiceClient was not given a root drive key.')
     if (!this.mnt) throw new Error('HyperdriveServiceClient was not given a root mountpoint.')
+    this._store = this.hyperspaceClient.corestore()
     this._rootDrive = await this._createDrive({ key: this.key })
   }
 
@@ -35,7 +37,7 @@ module.exports = class HyperdriveServiceClient {
   }
 
   async _createDrive (opts = {}) {
-    var drive = hyperdrive(this.hyperspaceClient.corestore, opts && opts.key, {
+    var drive = hyperdrive(this._store, opts && opts.key, {
       ...opts,
       extension: false
     }).promises

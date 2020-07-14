@@ -12,7 +12,8 @@ async function create (numMounts, opts) {
 
   for (let i = 0; i < numMounts; i++) {
     const fuseMnt = await tmp.dir({ unsafeCleanup: true })
-    const rootDriveCore = await clients[i].corestore.get()
+    const store = clients[i].corestore()
+    const rootDriveCore = store.get()
     await rootDriveCore.ready()
     const fuseService = new HyperdriveService({
       key: rootDriveCore.key,
