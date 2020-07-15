@@ -184,7 +184,7 @@ test('can seed a mounted drive', async t => {
     await client.mount(sharedDrivePath, { key: sharedDriveKey })
     await client.mount(unsharedDrivePath, { key: unsharedDriveKey })
 
-    // Both drives are read-only, so hyperdrive-daemon-client will automatically do a swarm lookup.
+    // Both drives are read-only, so hyperdrive will automatically do a swarm lookup.
     const sharedContents = await fs.readdir(sharedDrivePath)
     const unsharedContents = await fs.readdir(unsharedDrivePath)
 

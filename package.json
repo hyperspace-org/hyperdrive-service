@@ -31,7 +31,7 @@
     "hyperdrive": "^10.14.1",
     "hyperdrive-fuse": "^1.2.15",
     "hyperdrive-schemas": "^1.11.0",
-    "hyperspace": "^3.5.1",
+    "hyperspace": "^3.6.0",
     "is-options": "^1.0.1",
     "mirror-folder": "^3.1.0",
     "nanoresource-promise": "^1.2.2",

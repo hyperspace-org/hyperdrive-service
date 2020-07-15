@@ -81,7 +81,7 @@ module.exports = class HyperdriveService extends Nanoresource {
   async _runNetworkingHeuristics (drive) {
     // Always lookup readable drives.
     if (!drive.writable) {
-      const networkConfig = await this._client.network.getConfiguration(drive.discoveryKey)
+      const networkConfig = await this._client.network.status(drive.discoveryKey)
       if (!networkConfig) await this._client.network.configure(drive.discoveryKey, { announce: false, lookup: true, remember: false })
     }
     // Lookups must be done on new mounts immediately, then apply the parent's network config if an existing config does not exist.
