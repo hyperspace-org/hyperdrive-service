@@ -41,6 +41,7 @@ class StartCommand extends Command {
     })
     try {
       await service.open()
+      console.log('Hyperdrive service is running (Ctrl+c to stop)...')
     } catch (err) {
       console.error('Could not start the Hyperdrive service. Is Hyperspace running?')
       console.error('Error:', err)
