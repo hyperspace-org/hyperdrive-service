@@ -4,7 +4,8 @@ Documentation=https://github.com/hyperspace-org/hyperspace
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/bash -c '$$(npm config get prefix)/bin/hyperspace'
+ExecStart=hyperspace
+RestartSec=3
 
 [Install]
 WantedBy=multi-user.target

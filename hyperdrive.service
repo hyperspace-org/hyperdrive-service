@@ -5,7 +5,8 @@ After=hyperspace.service
 Requires=hyperspace.service
 
 [Service]
-ExecStart=/usr/bin/bash -c '$$(npm config get prefix)/bin/hyperdrive start'
+ExecStart=hyperdrive start
+RestartSec=1
 
 [Install]
 WantedBy=multi-user.target
