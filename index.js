@@ -4,6 +4,7 @@ const p = require('path')
 const { NanoresourcePromise: Nanoresource } = require('nanoresource-promise/emitter')
 const HyperspaceClient = require('hyperspace/client')
 const hyperdrive = require('hyperdrive')
+const applyHeuristics = require('hyperdrive-network-heuristics')
 const maybe = require('call-me-maybe')
 const pino = require('pino')
 
@@ -78,27 +79,6 @@ module.exports = class HyperdriveService extends Nanoresource {
     }
   }
 
-  async _runNetworkingHeuristics (drive) {
-    // Always lookup readable drives.
-    if (!drive.writable) {
-      const networkConfig = await this._client.network.status(drive.discoveryKey)
-      if (!networkConfig) await this._client.network.configure(drive.discoveryKey, { announce: false, lookup: true, remember: false })
-    }
-    // Lookups must be done on new mounts immediately, then apply the parent's network config if an existing config does not exist.
-    const mountListener = async (trie) => {
-      this._client.network.configure(trie.feed.discoveryKey, {
-        copyFrom: drive.discoveryKey,
-        lookup: !trie.feed.writable,
-        overwrite: false
-      }).catch(() => {
-        // If the configuration couldn't be overwritten, that's OK.
-      })
-    }
-    const innerDrive = drive.drive
-    innerDrive.on('mount', mountListener)
-    innerDrive.once('close', () => innerDrive.removeListener('mount', mountListener))
-  }
-
   async _createDrive (opts, cb) {
     if (typeof opts === 'function') {
       cb = opts
@@ -110,7 +90,7 @@ module.exports = class HyperdriveService extends Nanoresource {
     }).promises
     return maybe(cb, (async () => {
       await drive.ready()
-      await this._runNetworkingHeuristics(drive)
+      await applyHeuristics(drive, this._client.network)
       return drive
     })())
   }
