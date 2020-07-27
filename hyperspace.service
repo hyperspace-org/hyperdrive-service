@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 ExecStart=hyperspace
-RestartSec=3
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
