@@ -4,8 +4,11 @@ const { createMany: hsCreate } = require('hyperspace/test/helpers/create')
 const HyperdriveService = require('../..')
 const HyperdriveServiceClient = require('../../client')
 
-async function create (numMounts, opts) {
-  const { clients, cleanup: hsCleanup } = await hsCreate(numMounts, opts)
+async function create (numMounts, opts = {}) {
+  const { clients, cleanup: hsCleanup } = await hsCreate(numMounts, {
+    ...opts,
+    host: 'hyperspace-fuse'
+  })
   const fuseMnts = []
   const fuseServices = []
   const fuseClients = []
