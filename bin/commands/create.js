@@ -34,7 +34,7 @@ class CreateCommand extends HyperdriveServiceCommand {
       if (!flags['no-seed']) {
         await hsClient.network.configure(drive.discoveryKey, { announce: true, lookup: true, remember: true}) 
       }
-      const network = await hsClient.network.getConfiguration(drive.discoveryKey)
+      const network = await hsClient.network.status(drive.discoveryKey)
       await drive.close()
 
       const seeding = !!(network && network.announce)
