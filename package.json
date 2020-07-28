@@ -47,7 +47,7 @@
     "tmp-promise": "^3.0.2"
   },
   "scripts": {
-    "test": "standard && tape test/*.js"
+    "test": "standard && tape test/index.js"
   },
   "repository": {
     "type": "git",
