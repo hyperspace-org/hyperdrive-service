@@ -25,11 +25,9 @@
     "call-me-maybe": "^1.0.1",
     "cli-progress": "^3.8.2",
     "codecs": "^2.1.0",
-    "fuse-native": "^2.2.6",
     "globby": "^11.0.1",
     "hypercore-crypto": "^2.1.0",
     "hyperdrive": "^10.15.1",
-    "hyperdrive-fuse": "^1.2.15",
     "hyperdrive-network-heuristics": "^1.0.2",
     "hyperdrive-schemas": "^2.0.0",
     "hyperspace": "^3.6.0",
@@ -39,6 +37,10 @@
     "ora": "^4.0.4",
     "pino": "^6.3.2",
     "tape": "^5.0.1"
+  },
+  "optionalDependencies": {
+    "hyperdrive-fuse": "^1.2.15",
+    "fuse-native": "^2.2.6"
   },
   "devDependencies": {
     "standard": "^14.3.4",
