@@ -1,6 +1,6 @@
 {
   "name": "@hyperspace/hyperdrive",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A Hyperspace service that for managing Hyperdrives over FUSE.",
   "main": "index.js",
   "bin": {
