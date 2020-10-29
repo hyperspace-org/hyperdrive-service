@@ -1,0 +1,11 @@
+[Unit]
+Description=Hyperspace Server
+Documentation=https://github.com/hyperspace-org/hyperspace
+After=network.target
+
+[Service]
+ExecStart=hyperspace
+Restart=always
+
+[Install]
+WantedBy=default.target
